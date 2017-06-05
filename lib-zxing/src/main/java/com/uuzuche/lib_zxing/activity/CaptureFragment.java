@@ -40,7 +40,7 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
     private String characterSet;
     private InactivityTimer inactivityTimer;
     private MediaPlayer mediaPlayer;
-    private boolean playBeep;
+    public  boolean playBeep;
     private static final float BEEP_VOLUME = 0.10f;
     private boolean vibrate;
     private SurfaceView surfaceView;
