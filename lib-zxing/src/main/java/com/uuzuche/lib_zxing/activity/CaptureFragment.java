@@ -42,7 +42,7 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
     private MediaPlayer mediaPlayer;
     public  boolean playBeep;
     private static final float BEEP_VOLUME = 0.10f;
-    private boolean vibrate;
+    public boolean vibrate;
     private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
     private CodeUtils.AnalyzeCallback analyzeCallback;
@@ -101,7 +101,7 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
             playBeep = false;
         }
         initBeepSound();
-        vibrate = true;
+        vibrate = false;
     }
 
     @Override
