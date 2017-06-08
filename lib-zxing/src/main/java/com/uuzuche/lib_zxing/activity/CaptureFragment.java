@@ -40,9 +40,6 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
     private String characterSet;
     private InactivityTimer inactivityTimer;
     private MediaPlayer mediaPlayer;
-    public  boolean playBeep;
-    private static final float BEEP_VOLUME = 0.10f;
-    public boolean vibrate;
     private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
     private CodeUtils.AnalyzeCallback analyzeCallback;
@@ -93,15 +90,7 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
             surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         }
         decodeFormats = null;
-        characterSet = null;
-
-        playBeep = true;
-        AudioManager audioService = (AudioManager) getActivity().getSystemService(getActivity().AUDIO_SERVICE);
-        if (audioService.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
-            playBeep = false;
-        }
-        initBeepSound();
-        vibrate = false;
+        characterSet = null;        
     }
 
     @Override
@@ -129,8 +118,7 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
      * @param barcode
      */
     public void handleDecode(Result result, Bitmap barcode) {
-        inactivityTimer.onActivity();
-        playBeepSoundAndVibrate();
+        inactivityTimer.onActivity();        
 
         if (result == null || TextUtils.isEmpty(result.getText())) {
             if (analyzeCallback != null) {
@@ -195,42 +183,6 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
     public void drawViewfinder() {
         viewfinderView.drawViewfinder();
 
-    }
-
-    private void initBeepSound() {
-        if (playBeep && mediaPlayer == null) {
-            // The volume on STREAM_SYSTEM is not adjustable, and users found it
-            // too loud,
-            // so we now play on the music stream.
-            getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.setOnCompletionListener(beepListener);
-
-            AssetFileDescriptor file = getResources().openRawResourceFd(
-                    R.raw.beep);
-            try {
-                mediaPlayer.setDataSource(file.getFileDescriptor(),
-                        file.getStartOffset(), file.getLength());
-                file.close();
-                mediaPlayer.setVolume(BEEP_VOLUME, BEEP_VOLUME);
-                mediaPlayer.prepare();
-            } catch (IOException e) {
-                mediaPlayer = null;
-            }
-        }
-    }
-
-    private static final long VIBRATE_DURATION = 200L;
-
-    private void playBeepSoundAndVibrate() {
-        if (playBeep && mediaPlayer != null) {
-            mediaPlayer.start();
-        }
-        if (vibrate) {
-            Vibrator vibrator = (Vibrator) getActivity().getSystemService(getActivity().VIBRATOR_SERVICE);
-            vibrator.vibrate(VIBRATE_DURATION);
-        }
     }
 
     /**
